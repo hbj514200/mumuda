@@ -1,21 +1,22 @@
 package immd.yxd.com.immd;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private TextView Tab_name;
     private ImageView dibu_zuo;
     private ImageView dibu_zhong;
     private ImageView dibu_you;
-    private FrameLayout ly_content;
+    //private FrameLayout ly_content;
     private fuliyuanFragment f1, f2;
     private baicaijiaFragment f3;
     private FragmentManager fragmentManager;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Tab_name = (TextView) findViewById(R.id.toolbar_title);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dibu_zuo = (ImageView) findViewById(R.id.dibu_zuo);
         dibu_zhong = (ImageView) findViewById(R.id.dibu_zhong);
         dibu_you = (ImageView) findViewById(R.id.dibu_you);
-        ly_content = (FrameLayout) findViewById(R.id.fragment_container);
+        //ly_content = (FrameLayout) findViewById(R.id.fragment_container);
 
         dibu_zuo.setOnClickListener(this);
         dibu_zhong.setOnClickListener(this);
@@ -67,11 +69,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         hideAllFragment(transaction);
         switch(view.getId()){
             case R.id.dibu_zuo:
                 selected();
+                Tab_name.setText("福利园");
                 dibu_zuo.setSelected(true);
                 if(f1==null){
                     f1 = new fuliyuanFragment();
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.dibu_zhong:
                 selected();
+                Tab_name.setText("优品区");
                 dibu_zhong.setSelected(true);
                 if(f2==null){
                     f2 = new fuliyuanFragment();
@@ -94,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.dibu_you:
                 selected();
+                Tab_name.setText("白菜价");
                 dibu_you.setSelected(true);
                 if(f3==null){
                     f3 = new baicaijiaFragment();

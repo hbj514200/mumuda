@@ -43,7 +43,7 @@
     <LinearLayout
         android:id="@+id/dibu_tab"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="55dp"
         android:orientation="horizontal"
         android:background="@color/tool_bai"
         android:layout_alignParentBottom="true">

@@ -1,21 +1,24 @@
 package immd.yxd.com.immd;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -36,12 +39,14 @@ public class baicaijiaFragment extends Fragment {
 
     RequestQueue mQueue;
     private ListView listView;
+    private int page = 1;                                                                            //列表页数
     private myadapter adapter;
     private List<baicai_data> dataList = new ArrayList<baicai_data>();
     private Handler myhandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            jsonOK(dataList);
+            if (msg.what == 1)  jsonOK(dataList);
+            if (msg.what == 2)  loadMore();
             super.handleMessage(msg);
         }
     };
@@ -64,9 +69,22 @@ public class baicaijiaFragment extends Fragment {
                         getStrs();
                         swipeRefreshLayout.setRefreshing(false);
                     }
-                }, 5000);
+                }, 4000);
             }
         });
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener(){
+            @Override public void onScroll(AbsListView absListView, int i, int i1, int i2) { }
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState){
+                if (scrollState == NumberPicker.OnScrollListener.SCROLL_STATE_IDLE) {
+                    if (view.getLastVisiblePosition() == view.getCount() - 1) {
+                        getStrs();
+                    }
+                }
+            }
+        });
+
 
         getStrs();
         return view;
@@ -83,7 +101,7 @@ public class baicaijiaFragment extends Fragment {
             View view;
             ViewHolder viewHolder;
             if (convertView == null){
-                view = LayoutInflater.from(getContext()).inflate(R.layout.baicaijia_item, null);
+                view = LayoutInflater.from(getActivity()).inflate(R.layout.baicaijia_item, null);
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = (ImageView) view.findViewById(R.id.item_imageview);
                 viewHolder.yuanjia = (TextView) view.findViewById(R.id.item_yuanjia);
@@ -114,9 +132,17 @@ public class baicaijiaFragment extends Fragment {
     }
 
     public void jsonOK(List<baicai_data> dataList){
+        View footer = LayoutInflater.from(getActivity()).inflate(R.layout.listview_foot, null);
+        listView.addFooterView(footer);
+        Toast.makeText(getActivity(), "datalist长度： "+dataList.size(), Toast.LENGTH_SHORT).show();
         adapter = new myadapter(getActivity(), R.layout.baicaijia_item, dataList);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    private void loadMore(){
+        adapter.notifyDataSetChanged();
+        listView.setSelection(page*30-60-4);
     }
 
     public void getStrs(){
@@ -124,10 +150,10 @@ public class baicaijiaFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods");
+                    URL url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+page++);
                     HttpURLConnection connection = null;
                     connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("POST");
+                    connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);
                     connection.setReadTimeout(8000);
 
@@ -156,9 +182,12 @@ public class baicaijiaFragment extends Fragment {
                         data.setTitle( jsonObject.getString("title") );
                         data.setQuan_price( jsonObject.getString("quan_price") );
                         dataList.add(data);
-
                     }
-                    myhandler.sendMessage( new Message() );
+                    if (page==2){
+                        Message message1 = new Message();   message1.what = 1;      myhandler.sendMessage(message1);  //第一次
+                    } else {
+                        Message message2 = new Message();   message2.what = 2;      myhandler.sendMessage(message2);  //load more
+                    }
                 } catch (Exception e){
                     e.printStackTrace();
                     Log.i("baicaijia", "getStr抛出异常");
@@ -185,10 +214,9 @@ public class baicaijiaFragment extends Fragment {
                         imageView.setImageBitmap(response);
                         imageView.setVisibility(View.VISIBLE);
                     }
-                }, 300, 300, Bitmap.Config.RGB_565, new Response.ErrorListener() {    //最大宽度和高度，会压缩
+                }, 250, 250, Bitmap.Config.RGB_565, new Response.ErrorListener() {    //最大宽度和高度，会压缩
             @Override
             public void onErrorResponse(VolleyError error) {
-                imageView.setImageResource(R.drawable.test);
             }
         });
         mQueue.add(imageRequest);
