@@ -3,24 +3,21 @@ package immd.yxd.com.immd;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -35,61 +32,30 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 import immd.yxd.com.immd.goods.baicai_data;
 import immd.yxd.com.immd.tools.myIntent;
 
-public class baicaijiaFragment extends Fragment implements AdapterView.OnItemClickListener {
-
+public class content_grid_Fragment extends Fragment implements AdapterView.OnItemClickListener {
     RequestQueue mQueue;
-    private ListView listView;
-    private int page = 1;                                                                            //列表页数
+    private GridView gridView;
     private myadapter adapter;
     private List<baicai_data> dataList = new ArrayList<baicai_data>();
     private Handler myhandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1)  jsonOK(dataList);
-            if (msg.what == 2)  loadMore();
             super.handleMessage(msg);
         }
     };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_baicaijia, container, false);
-        listView = (ListView) view.findViewById(R.id.baicaijia_listview);
+        View view = inflater.inflate(R.layout.viewpager_item, container, false);
+        gridView  = (GridView) view.findViewById(R.id.viewpager_item_gridview);
+        gridView.setOnItemClickListener(this);
         mQueue = Volley.newRequestQueue(getActivity());
-        listView.setOnItemClickListener(this);
-
-        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_orange_light);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        getStrs();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 4000);
-            }
-        });
-
-        listView.setOnScrollListener(new AbsListView.OnScrollListener(){
-            @Override public void onScroll(AbsListView absListView, int i, int i1, int i2) { }
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState){
-                if (scrollState == NumberPicker.OnScrollListener.SCROLL_STATE_IDLE) {
-                    if (view.getLastVisiblePosition() == view.getCount() - 1) {
-                        getStrs();
-                    }
-                }
-            }
-        });
+        view.setBackgroundColor(Color.parseColor("#FFFFFF"));       //没办法，背景就是255白
 
         getStrs();
         return view;
@@ -106,7 +72,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             View view;
             ViewHolder viewHolder;
             if (convertView == null){
-                view = LayoutInflater.from(getActivity()).inflate(R.layout.baicaijia_item, null);
+                view = LayoutInflater.from(getActivity()).inflate(R.layout.grid_item, null);
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = (ImageView) view.findViewById(R.id.item_imageview);
                 viewHolder.yuanjia = (TextView) view.findViewById(R.id.item_yuanjia);
@@ -121,7 +87,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
                 if (viewHolder.imageView != null)   viewHolder.imageView.setVisibility(View.INVISIBLE);
             }
 
-            String juan_st = " 劵:¥ "+dataList.get(position).getQuan_price();
+            String juan_st = "劵:¥ "+dataList.get(position).getQuan_price();
 
             getImageView( viewHolder.imageView, dataList.get(position).getPic() );
             viewHolder.yuanjia.setText( dataList.get(position).getOrg_Price() );
@@ -137,17 +103,9 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     public void jsonOK(List<baicai_data> dataList){
-        View footer = LayoutInflater.from(getActivity()).inflate(R.layout.listview_foot, null);
-        listView.addFooterView(footer);
-        Toast.makeText(getActivity(), "datalist长度： "+dataList.size(), Toast.LENGTH_SHORT).show();
-        adapter = new myadapter(getActivity(), R.layout.baicaijia_item, dataList);
-        listView.setAdapter(adapter);
+        adapter = new myadapter(getActivity(), R.layout.grid_item, dataList);
+        gridView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-    }
-
-    private void loadMore(){
-        adapter.notifyDataSetChanged();
-        listView.setSelection(page*30-60-4);
     }
 
     public void getStrs(){
@@ -155,7 +113,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+page++);
+                    URL url = new URL("http://www.imumuda.cn/index.php?m=api&c=index&a=guess");
                     HttpURLConnection connection = null;
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
@@ -190,11 +148,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
                         data.setQuan_link( jsonObject.getString("quan_link") );
                         dataList.add(data);
                     }
-                    if (page==2){
                         Message message1 = new Message();   message1.what = 1;      myhandler.sendMessage(message1);  //第一次
-                    } else {
-                        Message message2 = new Message();   message2.what = 2;      myhandler.sendMessage(message2);  //load more
-                    }
                 } catch (Exception e){
                     e.printStackTrace();
                     Log.i("baicaijia", "getStr抛出异常");
@@ -221,7 +175,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
                         imageView.setImageBitmap(response);
                         imageView.setVisibility(View.VISIBLE);
                     }
-                }, 250, 250, Bitmap.Config.RGB_565, new Response.ErrorListener() {    //最大宽度和高度，会压缩
+                }, 300, 300, Bitmap.Config.RGB_565, new Response.ErrorListener() {    //最大宽度和高度，会压缩
             @Override
             public void onErrorResponse(VolleyError error) {
             }

@@ -1,12 +1,12 @@
 package immd.yxd.com.immd;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +17,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView dibu_zhong;
     private ImageView dibu_you;
     //private FrameLayout ly_content;
-    private fuliyuanFragment f1, f2;
+    private fuliyuanFragment f1;
+    youpinquFragment f2;
     private baicaijiaFragment f3;
     private FragmentManager fragmentManager;
 
@@ -27,6 +28,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TextView searchButton = (TextView) findViewById(R.id.toolbar_search);
+        TextView fenleiButton = (TextView) findViewById(R.id.toolbar_fenlei);
+        searchButton.setOnClickListener(this);
+        fenleiButton.setOnClickListener(this);
         Tab_name = (TextView) findViewById(R.id.toolbar_title);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Tab_name.setText("优品区");
                 dibu_zhong.setSelected(true);
                 if(f2==null){
-                    f2 = new fuliyuanFragment();
+                    f2 = new youpinquFragment();
                     transaction.add(R.id.fragment_container,f2);
                 }else{
                     transaction.show(f2);
@@ -106,6 +111,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }else{
                     transaction.show(f3);
                 }
+                break;
+            case R.id.toolbar_search:
+                startActivity( new Intent(MainActivity.this, SearchActivity.class) );
+                break;
+            case R.id.toolbar_fenlei:
                 break;
         }
 

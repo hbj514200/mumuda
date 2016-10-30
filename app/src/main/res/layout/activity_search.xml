@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        android:background="#f7f7f7" >
+
+        <ImageView
+            android:layout_gravity="left"
+            android:id="@+id/search_back"
+            android:adjustViewBounds="true"
+            android:src="@drawable/fanhui"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content" />
+
+        <EditText
+            android:id="@+id/search_edittext"
+            android:drawableStart="@drawable/fangdajin"
+            android:layout_width="230dp"
+            android:textColor="#232323"
+            android:maxLength="30"
+            android:singleLine="true"
+            android:layout_height="match_parent"
+            android:imeOptions="actionSearch"
+            android:hint="请输入你想要的商品名称       "
+            android:textSize="15sp" />
+
+        <TextView
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:id="@+id/search_sousuo"
+            android:layout_marginLeft="-10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp"
+            android:text="搜索"
+            android:textColor="@color/fen"
+            android:textSize="17sp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <ListView
+            android:id="@+id/baicaijia_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>

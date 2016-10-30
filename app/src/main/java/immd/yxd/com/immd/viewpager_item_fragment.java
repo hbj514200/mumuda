@@ -1,6 +1,7 @@
 package immd.yxd.com.immd;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -34,8 +36,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import immd.yxd.com.immd.goods.baicai_data;
+import immd.yxd.com.immd.tools.myIntent;
 
-public class viewpager_item_fragment extends Fragment {
+public class viewpager_item_fragment extends Fragment implements AdapterView.OnItemClickListener {
     public int Num = 1;
     RequestQueue mQueue;
     private GridView gridView;
@@ -55,6 +58,7 @@ public class viewpager_item_fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.viewpager_item, container, false);
         gridView  = (GridView) view.findViewById(R.id.viewpager_item_gridview);
+        gridView.setOnItemClickListener(this);
         mQueue = Volley.newRequestQueue(getActivity());
 
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
@@ -123,7 +127,7 @@ public class viewpager_item_fragment extends Fragment {
             viewHolder.qian.setText( dataList.get(position).getPrice() );
             viewHolder.xiangqin.setText( dataList.get(position).getTitle() );
             if (dataList.get(position).getIsTmall().equals("1")) viewHolder.tianmao.setText("天猫");
-            else                                                 viewHolder.tianmao.setText("");
+            else                                                 viewHolder.tianmao.setVisibility(View.INVISIBLE);
 
             return view;
         }
@@ -151,7 +155,9 @@ public class viewpager_item_fragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++)+"&ftype="+(Num));
+                    URL url;
+                    if (Num==514200)    url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++));         //第一项全部数据。貌似不需要加这个参数
+                    else                url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++)+"&ftype="+(Num));
                     HttpURLConnection connection = null;
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
@@ -168,11 +174,7 @@ public class viewpager_item_fragment extends Fragment {
                     }
                     connection.disconnect();
 
-                    //JSONArray jsonArray=new JSONObject(response.toString()).getJSONArray("msg");
-                    /**
-                     * 此处要删掉！！！！
-                     */
-                    JSONArray jsonArray=new JSONObject(getTest()).getJSONArray("msg");
+                    JSONArray jsonArray=new JSONObject(response.toString()).getJSONArray("msg");
 
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject jsonObject=(JSONObject)jsonArray.get(i);
@@ -185,7 +187,9 @@ public class viewpager_item_fragment extends Fragment {
                         data.setAli_click( jsonObject.getString("ali_click") );
                         data.setPic( jsonObject.getString("pic") );
                         data.setTitle( jsonObject.getString("title") );
+                        data.setQuan_time( jsonObject.getString("quan_time") );
                         data.setQuan_price( jsonObject.getString("quan_price") );
+                        data.setQuan_link( jsonObject.getString("quan_link") );
                         dataList.add(data);
                     }
                     if (page==2){
@@ -227,13 +231,10 @@ public class viewpager_item_fragment extends Fragment {
         mQueue.add(imageRequest);
     }
 
-
-    /**
-     * 这东西一定要删掉！！！！！！！！！！        测试用途
-     * @return
-     */
-    private String getTest(){
-        return "{\"status\":\"success\",\"msg\":[{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"},{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"},{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"},{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"},{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"},{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"},{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"},{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"},{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"},{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"},{\"goodsid\":\"539051433071\",\"title\":\"秋冬毛呢大衣男中长款青年韩版修身风衣男潮时尚男士加厚呢子外套\",\"quan_price\":\"30\",\"quan_surplus\":\"9192\",\"quan_time\":\"2016-10-31 00:00:00\",\"org_price\":\"99\",\"price\":\"69\",\"quan_link\":\"http:\\/\\/shop.m.taobao.com\\/shop\\/coupon.htm?seller_id=2077960768&activity_id=4e0312d3f3084da4bcb464f98f9720cc\",\"ali_click\":\"https:\\/\\/detail.tmall.com\\/item.htm?id=539051433071\",\"istmall\":\"1\",\"status\":\"1\",\"pic\":\"http:\\/\\/img.alicdn.com\\/imgextra\\/i4\\/2077960768\\/TB24QeOXCmK.eBjSZPfXXce2pXa_!!2077960768.jpg\"}]}";
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        Intent intent = myIntent.getIntent( dataList.get(position), new Intent(getActivity(), contentActivity.class) );
+        startActivity(intent);
     }
 
 }

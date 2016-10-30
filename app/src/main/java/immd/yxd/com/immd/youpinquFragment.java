@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -35,18 +36,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-
-import immd.yxd.com.immd.goods.baicai_data;
+import immd.yxd.com.immd.goods.article_data;
 import immd.yxd.com.immd.tools.myIntent;
 
-public class baicaijiaFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class youpinquFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     RequestQueue mQueue;
     private ListView listView;
     private int page = 1;                                                                            //列表页数
     private myadapter adapter;
-    private List<baicai_data> dataList = new ArrayList<baicai_data>();
+    private List<article_data> dataList = new ArrayList<article_data>();
     private Handler myhandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -60,8 +59,8 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_baicaijia, container, false);
         listView = (ListView) view.findViewById(R.id.baicaijia_listview);
-        mQueue = Volley.newRequestQueue(getActivity());
         listView.setOnItemClickListener(this);
+        mQueue = Volley.newRequestQueue(getActivity());
 
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_orange_light);
@@ -95,9 +94,9 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
         return view;
     }
 
-    public class myadapter extends ArrayAdapter<baicai_data> {
+    public class myadapter extends ArrayAdapter<article_data> {
 
-        public myadapter(Context context, int resouId, List<baicai_data> object) {
+        public myadapter(Context context, int resouId, List<article_data> object) {
             super(context, resouId, object);
         }
 
@@ -106,41 +105,28 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             View view;
             ViewHolder viewHolder;
             if (convertView == null){
-                view = LayoutInflater.from(getActivity()).inflate(R.layout.baicaijia_item, null);
+                view = LayoutInflater.from(getActivity()).inflate(R.layout.article_item, null);
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = (ImageView) view.findViewById(R.id.item_imageview);
-                viewHolder.yuanjia = (TextView) view.findViewById(R.id.item_yuanjia);
-                viewHolder.juan = (TextView) view.findViewById(R.id.item_juan);
+                if (viewHolder.imageView != null)   viewHolder.imageView.setVisibility(View.INVISIBLE);
+                getImageView( viewHolder.imageView, dataList.get(position).getPic() );
+                viewHolder.title = (TextView) view.findViewById(R.id.item_title);
                 viewHolder.xiangqin = (TextView) view.findViewById(R.id.item_xiangqin);
-                viewHolder.tianmao = (TextView) view.findViewById(R.id.item_tiaomao);
-                viewHolder.qian = (TextView) view.findViewById(R.id.item_qian);
                 view.setTag(viewHolder);
             } else {
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
-                if (viewHolder.imageView != null)   viewHolder.imageView.setVisibility(View.INVISIBLE);
             }
-
-            String juan_st = " 劵:¥ "+dataList.get(position).getQuan_price();
-
-            getImageView( viewHolder.imageView, dataList.get(position).getPic() );
-            viewHolder.yuanjia.setText( dataList.get(position).getOrg_Price() );
-            viewHolder.juan.setText( juan_st );
-            viewHolder.qian.setText( dataList.get(position).getPrice() );
-            viewHolder.xiangqin.setText( dataList.get(position).getTitle() );
-            if (dataList.get(position).getIsTmall().equals("1")) viewHolder.tianmao.setText("天猫");
-            else                                                 viewHolder.tianmao.setVisibility(View.INVISIBLE);
+            viewHolder.title.setText( dataList.get(position).getTitle() );
+            viewHolder.xiangqin.setText( dataList.get(position).getDesc() );
 
             return view;
         }
 
     }
 
-    public void jsonOK(List<baicai_data> dataList){
-        View footer = LayoutInflater.from(getActivity()).inflate(R.layout.listview_foot, null);
-        listView.addFooterView(footer);
-        Toast.makeText(getActivity(), "datalist长度： "+dataList.size(), Toast.LENGTH_SHORT).show();
-        adapter = new myadapter(getActivity(), R.layout.baicaijia_item, dataList);
+    public void jsonOK(List<article_data> dataList){
+        adapter = new myadapter(getActivity(), R.layout.article_item, dataList);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
@@ -155,7 +141,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+page++);
+                    URL url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=artList&count=30&page="+page++);
                     HttpURLConnection connection = null;
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
@@ -176,19 +162,17 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
 
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject jsonObject=(JSONObject)jsonArray.get(i);
-                        baicai_data data = new baicai_data();
+                        article_data data = new article_data();
 
-                        data.setGoodsID( jsonObject.getString("goodsid") );
-                        data.setPrice( jsonObject.getString("price") );
-                        data.setOrg_Price( jsonObject.getString("org_price") );
-                        data.setIsTmall( jsonObject.getString("istmall") );
-                        data.setAli_click( jsonObject.getString("ali_click") );
+                        data.setId( jsonObject.getString("id") );
                         data.setPic( jsonObject.getString("pic") );
                         data.setTitle( jsonObject.getString("title") );
-                        data.setQuan_price( jsonObject.getString("quan_price") );
-                        data.setQuan_time( jsonObject.getString("quan_time") );
-                        data.setQuan_link( jsonObject.getString("quan_link") );
-                        dataList.add(data);
+                        data.setDesc( jsonObject.getString("desc") );
+                        if (i==0)
+                        /**
+                         * 切记要删，限制了只获取1个， 因为 第二个文章pic网址为1  ，不合法会崩溃
+                         */
+                            dataList.add(data);
                     }
                     if (page==2){
                         Message message1 = new Message();   message1.what = 1;      myhandler.sendMessage(message1);  //第一次
@@ -205,14 +189,18 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
 
     class ViewHolder {
         ImageView imageView;
-        TextView yuanjia;
-        TextView juan;
         TextView xiangqin;
-        TextView tianmao;
-        TextView qian;
+        TextView title;
     }
 
     public void getImageView(final ImageView imageView, String url){
+        /**
+         * url = url.replace("//", "%%%%%");                               //网址转换，解决了imumuda的域名访问问题
+         url = url.replace("/", "//");
+         url = url.replace("%%%%%", "//");
+         */
+        //url = "http://www.imumuda.cn//Uploads//2016-10-23//580c657fad04c.jpg";
+
         ImageRequest imageRequest = new ImageRequest(
                 url,
                 new Response.Listener<Bitmap>() {
@@ -221,7 +209,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
                         imageView.setImageBitmap(response);
                         imageView.setVisibility(View.VISIBLE);
                     }
-                }, 250, 250, Bitmap.Config.RGB_565, new Response.ErrorListener() {    //最大宽度和高度，会压缩
+                }, 0, 0, Bitmap.Config.RGB_565, new Response.ErrorListener() {    //最大宽度和高度，会压缩
             @Override
             public void onErrorResponse(VolleyError error) {
             }
@@ -231,7 +219,8 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        Intent intent = myIntent.getIntent( dataList.get(position), new Intent(getActivity(), contentActivity.class) );
+        Intent intent = new Intent(getActivity(), articleActivity.class);
+        intent = myIntent.getArticleIntent( dataList.get(position), intent );
         startActivity(intent);
     }
 

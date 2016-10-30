@@ -30,7 +30,8 @@ public class fuliyuanFragment extends Fragment {
         //添加页卡视图
         for (int i=1;   i<=9;   i++){
             viewpager_item_fragment fragment = new viewpager_item_fragment();
-            fragment.Num = i;   //传递类型编号
+            if (i == 1)     fragment.Num=514200;
+            else            fragment.Num = i-1;   //传递类型编号
             mFragmentList.add(fragment);
         }
 

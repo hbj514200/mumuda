@@ -12,6 +12,8 @@ public class baicai_data {
     String Quan_time = "";//(有效期)
     String status = "";//(状态)
     String IsTmall = "";//(是否天猫)
+    String Quan_link = "";//领卷链接
+    String Desc = ""; //文章正文内商品的详情
 
     public String getGoodsID() {
         return GoodsID;
@@ -91,5 +93,21 @@ public class baicai_data {
 
     public void setIsTmall(String isTmall) {
         IsTmall = isTmall;
+    }
+
+    public String getQuan_link() {
+        return Quan_link;
+    }
+
+    public void setQuan_link(String quan_link) {
+        Quan_link = quan_link;
+    }
+
+    public String getDesc() {
+        return Desc;
+    }
+
+    public void setDesc(String desc) {
+        Desc = desc;
     }
 }

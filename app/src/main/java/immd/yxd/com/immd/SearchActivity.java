@@ -1,24 +1,25 @@
 package immd.yxd.com.immd;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
@@ -35,35 +36,33 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 import immd.yxd.com.immd.goods.baicai_data;
-import immd.yxd.com.immd.tools.myIntent;
 
-public class baicaijiaFragment extends Fragment implements AdapterView.OnItemClickListener {
-
+public class SearchActivity extends AppCompatActivity implements View.OnClickListener {
+    private EditText editText;
     RequestQueue mQueue;
     private ListView listView;
-    private int page = 1;                                                                            //列表页数
+    private String content;                                                                            //列表页数
     private myadapter adapter;
     private List<baicai_data> dataList = new ArrayList<baicai_data>();
     private Handler myhandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1)  jsonOK(dataList);
-            if (msg.what == 2)  loadMore();
             super.handleMessage(msg);
         }
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_baicaijia, container, false);
-        listView = (ListView) view.findViewById(R.id.baicaijia_listview);
-        mQueue = Volley.newRequestQueue(getActivity());
-        listView.setOnItemClickListener(this);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search);
 
-        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        listView = (ListView) findViewById(R.id.baicaijia_listview);
+        mQueue = Volley.newRequestQueue(SearchActivity.this);
+
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_orange_light);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -79,20 +78,46 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             }
         });
 
-        listView.setOnScrollListener(new AbsListView.OnScrollListener(){
-            @Override public void onScroll(AbsListView absListView, int i, int i1, int i2) { }
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState){
-                if (scrollState == NumberPicker.OnScrollListener.SCROLL_STATE_IDLE) {
-                    if (view.getLastVisiblePosition() == view.getCount() - 1) {
-                        getStrs();
-                    }
+        editText = (EditText) findViewById(R.id.search_edittext);
+        ImageView backButton = (ImageView) findViewById(R.id.search_back);
+        TextView sousuoButton = (TextView) findViewById(R.id.search_sousuo);
+        sousuoButton.setOnClickListener(this);
+        backButton.setOnClickListener(this);
+
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event)  {
+                if (actionId== EditorInfo.IME_ACTION_SEND ||(event!=null&&event.getKeyCode()== KeyEvent.KEYCODE_ENTER)) {
+                    search();       //键盘回车搜索
+                    return true;
                 }
+                return false;
             }
         });
 
-        getStrs();
-        return view;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.search_back :
+                finish();
+                break;
+            case R.id.search_sousuo :
+                search();
+                break;
+        }
+    }
+
+    private void search(){
+        content = editText.getText().toString();
+        if (content.equals("")){                                                //搜索内容为空
+            Toast toast = Toast.makeText(SearchActivity.this, "请输入内容", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 10);
+            toast.show();
+        } else {
+            getStrs();
+        }
+
     }
 
     public class myadapter extends ArrayAdapter<baicai_data> {
@@ -106,7 +131,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             View view;
             ViewHolder viewHolder;
             if (convertView == null){
-                view = LayoutInflater.from(getActivity()).inflate(R.layout.baicaijia_item, null);
+                view = LayoutInflater.from(SearchActivity.this).inflate(R.layout.search_item, null);
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = (ImageView) view.findViewById(R.id.item_imageview);
                 viewHolder.yuanjia = (TextView) view.findViewById(R.id.item_yuanjia);
@@ -129,7 +154,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             viewHolder.qian.setText( dataList.get(position).getPrice() );
             viewHolder.xiangqin.setText( dataList.get(position).getTitle() );
             if (dataList.get(position).getIsTmall().equals("1")) viewHolder.tianmao.setText("天猫");
-            else                                                 viewHolder.tianmao.setVisibility(View.INVISIBLE);
+            else                                                 viewHolder.tianmao.setText("");
 
             return view;
         }
@@ -137,17 +162,21 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     public void jsonOK(List<baicai_data> dataList){
-        View footer = LayoutInflater.from(getActivity()).inflate(R.layout.listview_foot, null);
-        listView.addFooterView(footer);
-        Toast.makeText(getActivity(), "datalist长度： "+dataList.size(), Toast.LENGTH_SHORT).show();
-        adapter = new myadapter(getActivity(), R.layout.baicaijia_item, dataList);
+        if (dataList.size() == 0){                                             //没有结果不填充ListView，而是Toast提示
+            Toast toast = Toast.makeText(SearchActivity.this, "找不到商品", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 10);
+            toast.show();
+            return;
+        } else {
+            closeKeyBorad();
+        }
+        if (listView.getFooterViewsCount() == 0){
+            View footer = LayoutInflater.from(SearchActivity.this).inflate(R.layout.search_footer, null);
+            listView.addFooterView(footer);
+        }
+        adapter = new myadapter(SearchActivity.this, R.layout.search_item, dataList);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-    }
-
-    private void loadMore(){
-        adapter.notifyDataSetChanged();
-        listView.setSelection(page*30-60-4);
     }
 
     public void getStrs(){
@@ -155,7 +184,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+page++);
+                    URL url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=search&key="+content);
                     HttpURLConnection connection = null;
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
@@ -186,15 +215,11 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
                         data.setPic( jsonObject.getString("pic") );
                         data.setTitle( jsonObject.getString("title") );
                         data.setQuan_price( jsonObject.getString("quan_price") );
-                        data.setQuan_time( jsonObject.getString("quan_time") );
-                        data.setQuan_link( jsonObject.getString("quan_link") );
                         dataList.add(data);
                     }
-                    if (page==2){
-                        Message message1 = new Message();   message1.what = 1;      myhandler.sendMessage(message1);  //第一次
-                    } else {
-                        Message message2 = new Message();   message2.what = 2;      myhandler.sendMessage(message2);  //load more
-                    }
+
+                     Message message1 = new Message();   message1.what = 1;      myhandler.sendMessage(message1);  //第一次
+
                 } catch (Exception e){
                     e.printStackTrace();
                     Log.i("baicaijia", "getStr抛出异常");
@@ -229,10 +254,10 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
         mQueue.add(imageRequest);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        Intent intent = myIntent.getIntent( dataList.get(position), new Intent(getActivity(), contentActivity.class) );
-        startActivity(intent);
+    private void closeKeyBorad(){
+        InputMethodManager inputMethodManager = (InputMethodManager)editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
+
 
 }

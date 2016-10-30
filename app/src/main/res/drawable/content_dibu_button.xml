@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+<item android:state_pressed="false">
+    <shape>
+        <!-- 这块的 corner重要作用是 控制：那个圆角的半径，值越大，半径越大！圆角的弧度就越大 -->
+        <corners  android:radius="10dp"/>
+        <solid  android:color="#fa4469"/>
+    </shape>
+</item>
+
+
+<item android:state_pressed="true">
+    <shape>
+        <!-- 这块的 corner重要作用是 控制：那个圆角的半径，值越大，半径越大！圆角的弧度就越大 -->
+        <corners  android:radius="10dp"/>
+        <solid  android:color="#de3c5d"/>
+    </shape>
+</item>
+
+</selector>
+
+
+
+
+
+

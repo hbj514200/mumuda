@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#efeff4" >
+
+    <ScrollView
+        android:id="@+id/content_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        <RelativeLayout
+            android:id="@+id/content_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ffffff" >
+
+            <ImageView
+                android:src="@drawable/im_loading"
+                android:id="@+id/item_imageview"
+                android:layout_alignParentTop="true"
+                android:layout_width="match_parent"
+                android:adjustViewBounds="true"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/item_xiangqin"
+                android:lineSpacingMultiplier="1.05"
+                android:padding="3dp"
+                android:paddingRight="6dp"
+                android:ellipsize="end"
+                android:layout_marginBottom="8dp"
+                android:layout_below="@id/item_imageview"
+                android:maxLines="3"
+                android:textColor="#333333"
+                android:layout_centerVertical="true"
+                android:textSize="15sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/item_qian"
+                android:layout_marginTop="-8dp"
+                android:layout_marginLeft="6dp"
+                android:layout_alignLeft="@id/item_imageview"
+                android:layout_below="@id/item_xiangqin"
+                android:padding="1dp"
+                android:textSize="20sp"
+                android:textColor="#d15d22"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/item_juan"
+                android:paddingRight="6dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@id/item_qian"
+                android:textColor="#808080"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:paddingLeft="4dp"
+                android:text="15"
+                android:id="@+id/item_yuanjia"
+                android:layout_marginRight="8dp"
+                android:layout_below="@id/item_qian"
+                android:layout_alignLeft="@id/item_xiangqin"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:paddingLeft="4dp"
+                android:id="@+id/item_youxiaoqi"
+                android:layout_marginRight="8dp"
+                android:layout_below="@id/item_yuanjia"
+                android:layout_alignLeft="@id/item_xiangqin"
+                android:layout_marginBottom="3dp"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:id="@+id/item_tiaomao"
+                android:layout_marginRight="8dp"
+                android:padding="2dp"
+                android:layout_marginBottom="4dp"
+                android:layout_alignBottom="@id/item_youxiaoqi"
+                android:layout_alignParentRight="true"
+                android:textColor="#fff9fa"
+                android:background="#fb456a"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+            <TextView
+                android:layout_marginTop="15dp"
+                android:id="@+id/content_grid_text"
+                android:layout_below="@id/content_content"
+                android:padding="3dp"
+                android:textColor="@color/fen"
+                android:text="—————— 猜你喜欢 ——————"
+                android:gravity="center_horizontal"
+                android:background="#ffffff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <fragment
+                android:id="@+id/content_grid_fragment"
+                android:layout_below="@id/content_grid_text"
+                android:name="immd.yxd.com.immd.content_grid_Fragment"
+                android:layout_width="match_parent"
+                android:layout_height="1150dp" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/dibu_tab"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="#f7f7f7"
+        android:layout_alignParentBottom="true">
+        <ImageView
+            android:id="@+id/tab_back"
+            android:padding="8dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/tab_back"
+            android:layout_alignParentStart="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+        <Button
+            android:layout_margin="5dp"
+            android:textColor="#ffffff"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/content_dibu_button"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/dibu_xiadan"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="      下单      " />
+        <Button
+            android:textSize="20sp"
+            android:layout_margin="5dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:textColor="#ffffff"
+            android:background="@drawable/content_dibu_button"
+            android:layout_toLeftOf="@id/dibu_xiadan"
+            android:id="@+id/dibu_linjuan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="      领劵      " />
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
