@@ -17,7 +17,6 @@
             android:theme="@style/welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -34,7 +33,10 @@
         <activity
             android:name=".webActivity"
             android:theme="@style/mainTheme" />
-        <activity android:name=".articleActivity"
+        <activity
+            android:name=".articleActivity"
+            android:theme="@style/mainTheme" />
+        <activity android:name=".fenleiActivity"
             android:theme="@style/mainTheme"></activity>
     </application>
 

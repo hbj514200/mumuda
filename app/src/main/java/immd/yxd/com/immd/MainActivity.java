@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity( new Intent(MainActivity.this, SearchActivity.class) );
                 break;
             case R.id.toolbar_fenlei:
+                startActivity( new Intent(MainActivity.this, fenleiActivity.class) );
                 break;
         }
 
