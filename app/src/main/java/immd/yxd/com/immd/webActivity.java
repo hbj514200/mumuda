@@ -37,7 +37,13 @@ public class webActivity extends AppCompatActivity {
         String ali_url = getIntent().getStringExtra("url");
         WebView webView = (WebView) findViewById(R.id.xiadan_webview);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
         webView.loadUrl(ali_url);
     }
 
@@ -52,11 +58,11 @@ public class webActivity extends AppCompatActivity {
     private boolean check_taobap(){
             final PackageManager packageManager = getPackageManager();
             List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
-            for ( int i = 0; i < pinfo.size(); i++ )
-            {
+            for ( int i = 0; i < pinfo.size(); i++ ) {
                 if(pinfo.get(i).packageName.equalsIgnoreCase("com.taobao.taobao"))
                     return true;
             }
             return false;
         }
+
     }

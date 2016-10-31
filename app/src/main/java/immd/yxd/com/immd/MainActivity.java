@@ -16,12 +16,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView dibu_zuo;
     private ImageView dibu_zhong;
     private ImageView dibu_you;
-    //private FrameLayout ly_content;
     private fuliyuanFragment f1;
     youpinquFragment f2;
     private baicaijiaFragment f3;
-    private FragmentManager fragmentManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +41,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dibu_zuo = (ImageView) findViewById(R.id.dibu_zuo);
         dibu_zhong = (ImageView) findViewById(R.id.dibu_zhong);
         dibu_you = (ImageView) findViewById(R.id.dibu_you);
-        //ly_content = (FrameLayout) findViewById(R.id.fragment_container);
 
         dibu_zuo.setOnClickListener(this);
         dibu_zhong.setOnClickListener(this);
         dibu_you.setOnClickListener(this);
+
+        zuo_xiangyin();
     }
 
     public void selected(){
@@ -78,15 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hideAllFragment(transaction);
         switch(view.getId()){
             case R.id.dibu_zuo:
-                selected();
-                Tab_name.setText("福利园");
-                dibu_zuo.setSelected(true);
-                if(f1==null){
-                    f1 = new fuliyuanFragment();
-                    transaction.add(R.id.fragment_container,f1);
-                }else{
-                    transaction.show(f1);
-                }
+                zuo_xiangyin();
                 break;
 
             case R.id.dibu_zhong:
@@ -120,6 +110,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
+        transaction.commit();
+    }
+
+    private void zuo_xiangyin(){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        hideAllFragment(transaction);
+        selected();                             //第一次进入默认做个选中，   故单独拉出来
+        dibu_zuo.setSelected(true);
+        Tab_name.setText("福利园");
+        if(f1==null){
+            f1 = new fuliyuanFragment();
+            transaction.add(R.id.fragment_container,f1);
+        }else{
+            transaction.show(f1);
+        }
         transaction.commit();
     }
 

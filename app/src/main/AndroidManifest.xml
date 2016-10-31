@@ -20,9 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MainActivity"
-            android:label=""
             android:theme="@style/mainTheme" />
         <activity
             android:name=".SearchActivity"
@@ -36,8 +36,12 @@
         <activity
             android:name=".articleActivity"
             android:theme="@style/mainTheme" />
-        <activity android:name=".fenleiActivity"
-            android:theme="@style/mainTheme"></activity>
+        <activity
+            android:name=".fenleiActivity"
+            android:theme="@style/mainTheme" />
+        <activity
+            android:name=".fenlei_list_Activity"
+            android:theme="@style/mainTheme" />
     </application>
 
 </manifest>

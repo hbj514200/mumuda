@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,9 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
     RequestQueue mQueue;
     private GridView gridView;
     private int page = 1;                                                                            //列表页数
+    public int ftype = 1;
+    public int stype = 1;
+    private boolean wangwenOK = false;
     private myadapter adapter;
     private List<baicai_data> dataList = new ArrayList<baicai_data>();
     private Handler myhandler = new Handler(Looper.getMainLooper()) {
@@ -139,10 +143,14 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
         /**
          *         gridView.addFooterView(footer);
          */
-        Toast.makeText(getActivity(), "datalist长度： "+dataList.size(), Toast.LENGTH_SHORT).show();
         adapter = new myadapter(getActivity(), R.layout.grid_item, dataList);
         gridView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        if (dataList.size() == 0 && wangwenOK == true){
+            Toast toast = Toast.makeText(getActivity(), "该分类暂时没有商品", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 10);
+            toast.show();
+        }
     }
 
     private void loadMore(){
@@ -151,12 +159,14 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
     }
 
     public void getStrs(){
+        Toast.makeText(getActivity(), ftype+ "  "+stype+ "  "+Num, Toast.LENGTH_SHORT).show();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     URL url;
                     if (Num==514200)    url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++));         //第一项全部数据。貌似不需要加这个参数
+                    else if (Num==1000)              url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&ftype="+ftype+"&stype="+stype+"&page="+(page++) );
                     else                url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++)+"&ftype="+(Num));
                     HttpURLConnection connection = null;
                     connection = (HttpURLConnection) url.openConnection();
@@ -193,6 +203,7 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
                         dataList.add(data);
                     }
                     if (page==2){
+                        wangwenOK = true;
                         Message message1 = new Message();   message1.what = 1;      myhandler.sendMessage(message1);  //第一次
                     } else {
                         Message message2 = new Message();   message2.what = 2;      myhandler.sendMessage(message2);  //load more
@@ -233,7 +244,7 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        Intent intent = myIntent.getIntent( dataList.get(position), new Intent(getActivity(), contentActivity.class) );
+        Intent intent = myIntent.getIntent(dataList.get(position), new Intent(getActivity(), contentActivity.class));
         startActivity(intent);
     }
 

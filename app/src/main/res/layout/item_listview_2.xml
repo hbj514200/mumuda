@@ -2,21 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:orientation="horizontal">
-    
+    android:orientation="vertical">
+
     <ImageView
+        android:id="@+id/item_im"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center_horizontal"
         android:padding="5dp"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@mipmap/ic_launcher"/>
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/im_loading"/>
 
     <TextView
-        android:id="@+id/textview"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="搏击爱好者Z"
-        android:textSize="24sp"
-        android:gravity="center"/>
+        android:id="@+id/item_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="小祥未来科技"
+        android:textSize="15sp"
+        android:textColor="#161616"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal"/>
 
 </LinearLayout>

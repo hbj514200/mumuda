@@ -57,14 +57,31 @@
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/list_item_2"
+    <LinearLayout
+        android:layout_weight="3"
+        android:layout_marginLeft="2dp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginLeft="2dp"
-        android:layout_weight="3"
-        android:divider="@null"
-        android:scrollbars="none" />
+        android:orientation="vertical" >
+        <TextView
+            android:background="#f3f3f3"
+            android:text="女装"
+            android:padding="4dp"
+            android:id="@+id/fenlei_you_title"
+            android:textSize="19sp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:textColor="#f85d7d"
+            android:layout_height="wrap_content" />
+        <GridView
+            android:id="@+id/list_item_2"
+            android:numColumns="3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:scrollbars="none" />
+    </LinearLayout>
+
 </LinearLayout>
 
 </RelativeLayout>

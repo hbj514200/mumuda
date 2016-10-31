@@ -32,7 +32,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:activityOpenEnterAnimation">@android:anim/fade_in</item>
-        <item name="android:windowBackground">@color/di_hui</item>
+        <item name="android:windowBackground">@null</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
