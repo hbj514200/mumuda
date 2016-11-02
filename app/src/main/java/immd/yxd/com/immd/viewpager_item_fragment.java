@@ -2,46 +2,36 @@ package immd.yxd.com.immd;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import immd.yxd.com.immd.goods.baicai_data;
+import immd.yxd.com.immd.tools.CallBack;
+import immd.yxd.com.immd.tools.httpConn;
 import immd.yxd.com.immd.tools.myIntent;
+import immd.yxd.com.immd.tools.shuaxin;
 
-public class viewpager_item_fragment extends Fragment implements AdapterView.OnItemClickListener {
+public class viewpager_item_fragment extends Fragment implements AdapterView.OnItemClickListener, CallBack {
     public int Num = 1;
-    RequestQueue mQueue;
+    private httpConn connect;
     private GridView gridView;
     private int page = 1;                                                                            //列表页数
     public int ftype = 1;
@@ -63,35 +53,10 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
         View view = inflater.inflate(R.layout.viewpager_item, container, false);
         gridView  = (GridView) view.findViewById(R.id.viewpager_item_gridview);
         gridView.setOnItemClickListener(this);
-        mQueue = Volley.newRequestQueue(getActivity());
+        connect = httpConn.newInstance(getActivity());
 
-        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_orange_light);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        getStrs();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 4000);
-            }
-        });
-
-        gridView.setOnScrollListener(new AbsListView.OnScrollListener(){
-            @Override public void onScroll(AbsListView absListView, int i, int i1, int i2) { }
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState){
-                if (scrollState == NumberPicker.OnScrollListener.SCROLL_STATE_IDLE) {
-                    if (view.getLastVisiblePosition() == view.getCount() - 1) {
-                        getStrs();
-                    }
-                }
-            }
-        });
+        shuaxin.xiala(view, R.id.swipe_container, this);
+        shuaxin.shangla(gridView, this);
 
         getStrs();
         return view;
@@ -112,6 +77,7 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = (ImageView) view.findViewById(R.id.item_imageview);
                 viewHolder.yuanjia = (TextView) view.findViewById(R.id.item_yuanjia);
+                viewHolder.yuanjia.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG); //中划线
                 viewHolder.juan = (TextView) view.findViewById(R.id.item_juan);
                 viewHolder.xiangqin = (TextView) view.findViewById(R.id.item_xiangqin);
                 viewHolder.tianmao = (TextView) view.findViewById(R.id.item_tiaomao);
@@ -125,7 +91,7 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
 
             String juan_st = "劵:¥ "+dataList.get(position).getQuan_price();
 
-            getImageView( viewHolder.imageView, dataList.get(position).getPic() );
+            connect.getImageView( viewHolder.imageView, dataList.get(position).getPic(), 300 );
             viewHolder.yuanjia.setText( dataList.get(position).getOrg_Price() );
             viewHolder.juan.setText( juan_st );
             viewHolder.qian.setText( dataList.get(position).getPrice() );
@@ -139,14 +105,10 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
     }
 
     public void jsonOK(List<baicai_data> dataList){
-        //View footer = LayoutInflater.from(getActivity()).inflate(R.layout.listview_foot, null);
-        /**
-         *         gridView.addFooterView(footer);
-         */
         adapter = new myadapter(getActivity(), R.layout.grid_item, dataList);
         gridView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        if (dataList.size() == 0 && wangwenOK == true){
+        if (dataList.size() == 0 && wangwenOK ){
             Toast toast = Toast.makeText(getActivity(), "该分类暂时没有商品", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 10);
             toast.show();
@@ -159,33 +121,17 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
     }
 
     public void getStrs(){
-        Toast.makeText(getActivity(), ftype+ "  "+stype+ "  "+Num, Toast.LENGTH_SHORT).show();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    URL url;
-                    if (Num==514200)    url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++));         //第一项全部数据。貌似不需要加这个参数
-                    else if (Num==1000)              url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&ftype="+ftype+"&stype="+stype+"&page="+(page++) );
-                    else                url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++)+"&ftype="+(Num));
-                    HttpURLConnection connection = null;
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
+                    String url;
+                    if (Num==514200)    url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++);         //第一项全部数据。貌似不需要加这个参数
+                    else if (Num==1000) url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&ftype="+ftype+"&stype="+stype+"&page="+(page++);
+                    else                url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++)+"&ftype="+(Num);
+                    String response = httpConn.getData(url);
 
-                    InputStream in = connection.getInputStream();
-                    BufferedReader reader = new BufferedReader( new InputStreamReader(in));
-
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ( (line=reader.readLine()) != null ){
-                        response.append(line);
-                    }
-                    connection.disconnect();
-
-                    JSONArray jsonArray=new JSONObject(response.toString()).getJSONArray("msg");
-
+                    JSONArray jsonArray=new JSONObject(response).getJSONArray("msg");
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject jsonObject=(JSONObject)jsonArray.get(i);
                         baicai_data data = new baicai_data();
@@ -223,23 +169,6 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
         TextView xiangqin;
         TextView tianmao;
         TextView qian;
-    }
-
-    public void getImageView(final ImageView imageView, String url){
-        ImageRequest imageRequest = new ImageRequest(
-                url,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        imageView.setImageBitmap(response);
-                        imageView.setVisibility(View.VISIBLE);
-                    }
-                }, 300, 300, Bitmap.Config.RGB_565, new Response.ErrorListener() {    //最大宽度和高度，会压缩
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });
-        mQueue.add(imageRequest);
     }
 
     @Override

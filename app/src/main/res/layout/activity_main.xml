@@ -88,7 +88,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         android:layout_above="@id/dibu_tab"
-        android:background="@color/di_hui">
+        android:background="@null" >
     </FrameLayout>
 
 </RelativeLayout>

@@ -1,7 +1,7 @@
 package immd.yxd.com.immd;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -22,26 +22,19 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import immd.yxd.com.immd.goods.baicai_data;
+import immd.yxd.com.immd.tools.CallBack;
+import immd.yxd.com.immd.tools.httpConn;
+import immd.yxd.com.immd.tools.shuaxin;
 
-public class SearchActivity extends AppCompatActivity implements View.OnClickListener {
+public class SearchActivity extends AppCompatActivity implements View.OnClickListener, CallBack {
     private EditText editText;
-    RequestQueue mQueue;
+    private httpConn connect;
     private ListView listView;
     private String content;                                                                            //列表页数
     private myadapter adapter;
@@ -60,23 +53,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_search);
 
         listView = (ListView) findViewById(R.id.baicaijia_listview);
-        mQueue = Volley.newRequestQueue(SearchActivity.this);
+        connect = httpConn.newInstance(this);
 
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_orange_light);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        getStrs();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 4000);
-            }
-        });
+        shuaxin.xiala(swipeRefreshLayout, this);
 
         editText = (EditText) findViewById(R.id.search_edittext);
         ImageView backButton = (ImageView) findViewById(R.id.search_back);
@@ -135,6 +115,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = (ImageView) view.findViewById(R.id.item_imageview);
                 viewHolder.yuanjia = (TextView) view.findViewById(R.id.item_yuanjia);
+                viewHolder.yuanjia.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG); //中划线
                 viewHolder.juan = (TextView) view.findViewById(R.id.item_juan);
                 viewHolder.xiangqin = (TextView) view.findViewById(R.id.item_xiangqin);
                 viewHolder.tianmao = (TextView) view.findViewById(R.id.item_tiaomao);
@@ -148,13 +129,13 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
             String juan_st = " 劵:¥ "+dataList.get(position).getQuan_price();
 
-            getImageView( viewHolder.imageView, dataList.get(position).getPic() );
+            connect.getImageView( viewHolder.imageView, dataList.get(position).getPic(), 250 );
             viewHolder.yuanjia.setText( dataList.get(position).getOrg_Price() );
             viewHolder.juan.setText( juan_st );
             viewHolder.qian.setText( dataList.get(position).getPrice() );
             viewHolder.xiangqin.setText( dataList.get(position).getTitle() );
             if (dataList.get(position).getIsTmall().equals("1")) viewHolder.tianmao.setText("天猫");
-            else                                                 viewHolder.tianmao.setText("");
+            else                                                 viewHolder.tianmao.setVisibility(View.INVISIBLE);
 
             return view;
         }
@@ -184,25 +165,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=search&key="+content);
-                    HttpURLConnection connection = null;
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
+                    String url = "http://119.29.32.91/index.php?m=api&c=index&a=search&key="+content;
+                    String response = httpConn.getData(url);
 
-                    InputStream in = connection.getInputStream();
-                    BufferedReader reader = new BufferedReader( new InputStreamReader(in));
-
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ( (line=reader.readLine()) != null ){
-                        response.append(line);
-                    }
-                    connection.disconnect();
-
-                    JSONArray jsonArray=new JSONObject(response.toString()).getJSONArray("msg");
-
+                    JSONArray jsonArray=new JSONObject(response).getJSONArray("msg");
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject jsonObject=(JSONObject)jsonArray.get(i);
                         baicai_data data = new baicai_data();
@@ -235,23 +201,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         TextView xiangqin;
         TextView tianmao;
         TextView qian;
-    }
-
-    public void getImageView(final ImageView imageView, String url){
-        ImageRequest imageRequest = new ImageRequest(
-                url,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        imageView.setImageBitmap(response);
-                        imageView.setVisibility(View.VISIBLE);
-                    }
-                }, 250, 250, Bitmap.Config.RGB_565, new Response.ErrorListener() {    //最大宽度和高度，会压缩
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });
-        mQueue.add(imageRequest);
     }
 
     private void closeKeyBorad(){

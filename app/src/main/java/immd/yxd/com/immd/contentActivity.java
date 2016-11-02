@@ -1,7 +1,6 @@
 package immd.yxd.com.immd;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,14 +8,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
+
+import immd.yxd.com.immd.tools.httpConn;
 
 public class contentActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private httpConn connect;
     private String quan_link = "";
     private String goosid = "";
     private String ali_click = "";
@@ -25,6 +22,7 @@ public class contentActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
+        connect = httpConn.newInstance(this);
 
         view_init();
 
@@ -53,7 +51,7 @@ public class contentActivity extends AppCompatActivity implements View.OnClickLi
         TextView qian = (TextView) findViewById(R.id.item_qian);
         TextView time = (TextView) findViewById(R.id.item_youxiaoqi);
 
-        getImageView(imageView, getIntent().getStringExtra("pic"));
+        connect.getImageView( imageView, getIntent().getStringExtra("pic"), 300 );
         String[] youxiaoqi = getIntent().getStringExtra("quan_time").split(" ");    //返回的时间带有时分秒
         time.setText( "有效期：" + youxiaoqi[0]  );
         yuanjia.setText( "原价:  " + getIntent().getStringExtra("org_price") );
@@ -66,25 +64,6 @@ public class contentActivity extends AppCompatActivity implements View.OnClickLi
         pic = getIntent().getStringExtra("pic");
         if (getIntent().getStringExtra("istmall").equals("1")) tianmao.setText("天猫");
         else                                                   tianmao.setVisibility(View.INVISIBLE);
-    }
-
-    public void getImageView(final ImageView imageView, String url){
-        RequestQueue mQueue;
-        mQueue = Volley.newRequestQueue(contentActivity.this);
-        ImageRequest imageRequest = new ImageRequest(
-                url,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        imageView.setImageBitmap(response);
-                        imageView.setVisibility(View.VISIBLE);
-                    }
-                }, 0, 0, Bitmap.Config.RGB_565, new Response.ErrorListener() {    //最大宽度和高度，会压缩
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });
-        mQueue.add(imageRequest);
     }
 
     @Override

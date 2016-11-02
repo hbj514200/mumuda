@@ -2,7 +2,6 @@ package immd.yxd.com.immd;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,27 +17,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import immd.yxd.com.immd.goods.baicai_data;
+import immd.yxd.com.immd.tools.httpConn;
 import immd.yxd.com.immd.tools.myIntent;
 
 public class article_listview_Fragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    private httpConn connect;
     private String goodsid;
-    RequestQueue mQueue;
     private ListView listView;
     private int page = 1;                                                                            //列表页数
     private myadapter adapter;
@@ -54,9 +44,9 @@ public class article_listview_Fragment extends Fragment implements AdapterView.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_baicaijia, container, false);
+        connect = httpConn.newInstance(getActivity());
         listView = (ListView) view.findViewById(R.id.baicaijia_listview);
         listView.setDivider(null);      //去掉listview分割线
-        mQueue = Volley.newRequestQueue(getActivity());
         listView.setOnItemClickListener(this);
 
         return view;
@@ -100,7 +90,7 @@ public class article_listview_Fragment extends Fragment implements AdapterView.O
                 if (viewHolder.imageView != null)   viewHolder.imageView.setVisibility(View.INVISIBLE);
             }
 
-            getImageView( viewHolder.imageView, dataList.get(position).getPic() );
+            connect.getImageView( viewHolder.imageView, dataList.get(position).getPic(), 250 );
             viewHolder.juan.setText( "劵："+dataList.get(position).getQuan_price() );
             viewHolder.qian.setText( "¥：" + dataList.get(position).getPrice() );
             viewHolder.xiangqin.setText( dataList.get(position).getDesc() );
@@ -122,24 +112,10 @@ public class article_listview_Fragment extends Fragment implements AdapterView.O
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://119.29.32.91/index.php?m=api&c=index&a=article&id=" + goodsid);
-                    HttpURLConnection connection = null;
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
+                    String  url = "http://119.29.32.91/index.php?m=api&c=index&a=article&count=20&id=" + goodsid + "&page=" + (page++);
+                    String response = connect.getData(url);
 
-                    InputStream in = connection.getInputStream();
-                    BufferedReader reader = new BufferedReader( new InputStreamReader(in));
-
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ( (line=reader.readLine()) != null ){
-                        response.append(line);
-                    }
-                    connection.disconnect();
-
-                    JSONArray jsonArray=new JSONObject(response.toString()).getJSONArray("msg");
+                    JSONArray jsonArray=new JSONObject(response).getJSONArray("msg");
 
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject jsonObject=(JSONObject)jsonArray.get(i);
@@ -169,23 +145,6 @@ public class article_listview_Fragment extends Fragment implements AdapterView.O
         TextView xiangqin;
         TextView qian;
         Button button;
-    }
-
-    public void getImageView(final ImageView imageView, String url){
-        ImageRequest imageRequest = new ImageRequest(
-                url,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        imageView.setImageBitmap(response);
-                        imageView.setVisibility(View.VISIBLE);
-                    }
-                }, 250, 250, Bitmap.Config.RGB_565, new Response.ErrorListener() {    //最大宽度和高度，会压缩
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });
-        mQueue.add(imageRequest);
     }
 
     @Override

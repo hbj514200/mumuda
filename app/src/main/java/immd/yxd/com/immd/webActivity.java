@@ -10,8 +10,6 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import java.util.List;
 
 public class webActivity extends AppCompatActivity {

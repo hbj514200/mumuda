@@ -46,7 +46,7 @@ public class fuliyuanFragment extends Fragment {
         mTitleList.add("美妆");
         mTitleList.add("文体");
 
-        mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);//设置tab模式，当前为系统默认模式
+        mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);//设置tab模式，当前为左右滚动
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(0)));//添加tab选项卡
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(1)));
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(2)));

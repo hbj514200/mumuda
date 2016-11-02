@@ -1,7 +1,6 @@
 package immd.yxd.com.immd.tools;
 
 import android.content.Intent;
-
 import immd.yxd.com.immd.goods.article_data;
 import immd.yxd.com.immd.goods.baicai_data;
 

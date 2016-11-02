@@ -1,7 +1,6 @@
 package immd.yxd.com.immd;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -76,13 +75,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hideAllFragment(transaction);
         switch(view.getId()){
             case R.id.dibu_zuo:
-                zuo_xiangyin();
+                selected();                             //第一次进入默认做个选中，   故单独拉出来
+                dibu_zuo.setSelected(true);
+                Tab_name.setText("福利园");
+                if(f1==null){
+                    f1 = new fuliyuanFragment();
+                    transaction.add(R.id.fragment_container,f1);
+                }else{
+                    transaction.show(f1);
+                }
                 break;
-
             case R.id.dibu_zhong:
                 selected();
-                Tab_name.setText("优品区");
                 dibu_zhong.setSelected(true);
+                Tab_name.setText("优品区");
                 if(f2==null){
                     f2 = new youpinquFragment();
                     transaction.add(R.id.fragment_container,f2);
@@ -93,8 +99,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.dibu_you:
                 selected();
-                Tab_name.setText("白菜价");
                 dibu_you.setSelected(true);
+                Tab_name.setText("白菜价");
                 if(f3==null){
                     f3 = new baicaijiaFragment();
                     transaction.add(R.id.fragment_container,f3);

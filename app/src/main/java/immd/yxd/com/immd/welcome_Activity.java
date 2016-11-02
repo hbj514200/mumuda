@@ -9,7 +9,6 @@ public class welcome_Activity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         tiaozhuan();
     }
 
