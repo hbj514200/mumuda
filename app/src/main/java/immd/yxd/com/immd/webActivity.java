@@ -27,21 +27,20 @@ public class webActivity extends AppCompatActivity {
             }
         });
 
-        if (check_taobap())     taobao();
-        else                    loadUrl();
+        if (getIntent().getIntExtra("leixin",1)==1){          //领卷必须网页
+            loadUrl();
+        } else {
+            if (check_taobao())     {     taobao();      finish();    }
+            else                          loadUrl();
+        }
+
     }
 
     private void loadUrl(){
         String ali_url = getIntent().getStringExtra("url");
         WebView webView = (WebView) findViewById(R.id.xiadan_webview);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
-        });
+        webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(ali_url);
     }
 
@@ -53,7 +52,7 @@ public class webActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private boolean check_taobap(){
+    private boolean check_taobao(){
             final PackageManager packageManager = getPackageManager();
             List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
             for ( int i = 0; i < pinfo.size(); i++ ) {

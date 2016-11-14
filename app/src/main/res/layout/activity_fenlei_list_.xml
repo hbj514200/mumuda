@@ -33,6 +33,7 @@
     </android.support.v7.widget.Toolbar>
 
     <FrameLayout
+        android:background="#efeff4"
         android:layout_below="@id/toolbar"
         android:id="@+id/feneli_list_fragment"
         android:layout_width="match_parent"

@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
-
 import immd.yxd.com.immd.tools.httpConn;
 
 public class contentActivity extends AppCompatActivity implements View.OnClickListener {
@@ -25,7 +23,6 @@ public class contentActivity extends AppCompatActivity implements View.OnClickLi
         connect = httpConn.newInstance(this);
 
         view_init();
-
     }
 
     private void view_init() {
@@ -35,13 +32,6 @@ public class contentActivity extends AppCompatActivity implements View.OnClickLi
         xiadan.setOnClickListener(this);
         Button linjuan = (Button) findViewById(R.id.dibu_linjuan);
         linjuan.setOnClickListener(this);
-        final ScrollView scrollView = (ScrollView) findViewById(R.id.content_scrollview);
-        scrollView.post(new Runnable() {
-            public void run() {
-                scrollView.fullScroll(ScrollView.FOCUS_UP);      //滚动布局定位到顶部
-            }
-        });
-
 
         ImageView imageView = (ImageView) findViewById(R.id.item_imageview);
         TextView yuanjia = (TextView) findViewById(R.id.item_yuanjia);
@@ -51,7 +41,7 @@ public class contentActivity extends AppCompatActivity implements View.OnClickLi
         TextView qian = (TextView) findViewById(R.id.item_qian);
         TextView time = (TextView) findViewById(R.id.item_youxiaoqi);
 
-        connect.getImageView( imageView, getIntent().getStringExtra("pic"), 300 );
+        connect.displayImg( imageView, getIntent().getStringExtra("pic"), 0);
         String[] youxiaoqi = getIntent().getStringExtra("quan_time").split(" ");    //返回的时间带有时分秒
         time.setText( "有效期：" + youxiaoqi[0]  );
         yuanjia.setText( "原价:  " + getIntent().getStringExtra("org_price") );
@@ -74,11 +64,13 @@ public class contentActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.dibu_linjuan :
                 Intent intent = new Intent(contentActivity.this, webActivity.class);
+                intent.putExtra("leixin", 1);
                 intent.putExtra("url", quan_link);
                 startActivity(intent);
                 break;
             case R.id.dibu_xiadan :
                 Intent intent2 = new Intent(contentActivity.this, webActivity.class);
+                intent2.putExtra("leixin", 2);
                 intent2.putExtra("url", ali_click);
                 startActivity(intent2);
                 break;

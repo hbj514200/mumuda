@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private int position = 1;
     private TextView Tab_name;
     private ImageView dibu_zuo;
     private ImageView dibu_zhong;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }else{
                     transaction.show(f1);
                 }
+                position = 1;
                 break;
             case R.id.dibu_zhong:
                 selected();
@@ -95,8 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }else{
                     transaction.show(f2);
                 }
+                position = 2;
                 break;
-
             case R.id.dibu_you:
                 selected();
                 dibu_you.setSelected(true);
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }else{
                     transaction.show(f3);
                 }
+                position = 3;
                 break;
             case R.id.toolbar_search:
                 startActivity( new Intent(MainActivity.this, SearchActivity.class) );
@@ -131,6 +134,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else{
             transaction.show(f1);
         }
+        transaction.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (f1!=null && position==1)    transaction.show(f1);
+        if (f2!=null && position==2)    transaction.show(f2);
+        if (f3!=null && position==3)    transaction.show(f3);
         transaction.commit();
     }
 

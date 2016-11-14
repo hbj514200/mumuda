@@ -43,7 +43,7 @@ public class article_listview_Fragment extends Fragment implements AdapterView.O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_baicaijia, container, false);
+        View view = inflater.inflate(R.layout.fragment_article_list, container, false);
         connect = httpConn.newInstance(getActivity());
         listView = (ListView) view.findViewById(R.id.baicaijia_listview);
         listView.setDivider(null);      //去掉listview分割线
@@ -87,10 +87,9 @@ public class article_listview_Fragment extends Fragment implements AdapterView.O
             } else {
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
-                if (viewHolder.imageView != null)   viewHolder.imageView.setVisibility(View.INVISIBLE);
             }
 
-            connect.getImageView( viewHolder.imageView, dataList.get(position).getPic(), 250 );
+            connect.displayImg(viewHolder.imageView, dataList.get(position).getPic(), 0);
             viewHolder.juan.setText( "劵："+dataList.get(position).getQuan_price() );
             viewHolder.qian.setText( "¥：" + dataList.get(position).getPrice() );
             viewHolder.xiangqin.setText( dataList.get(position).getDesc() );
@@ -102,6 +101,8 @@ public class article_listview_Fragment extends Fragment implements AdapterView.O
     }
 
     public void jsonOK(List<baicai_data> dataList){
+        View header = getHeader();
+        listView.addHeaderView(header);
         adapter = new myadapter(getActivity(), R.layout.article_listview_item, dataList);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -133,6 +134,7 @@ public class article_listview_Fragment extends Fragment implements AdapterView.O
                 } catch (Exception e){
                     e.printStackTrace();
                     Log.i("baicaijia", "getStr抛出异常");
+                    page--;
                 }
             }
         }).start();
@@ -151,6 +153,18 @@ public class article_listview_Fragment extends Fragment implements AdapterView.O
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         Intent intent = myIntent.getIntent( dataList.get(position), new Intent(getActivity(), contentActivity.class) );
         startActivity(intent);
+    }
+
+    private View getHeader(){
+        View header = LayoutInflater.from(getActivity()).inflate(R.layout.article_listview_header, null);
+        ImageView imageView = (ImageView) header.findViewById(R.id.item_imageview);
+        TextView title = (TextView) header.findViewById(R.id.item_title);
+        TextView xiangqin = (TextView) header.findViewById(R.id.item_xiangqin);
+
+        connect.getImageView( imageView, getActivity().getIntent().getStringExtra("pic"), 0 );
+        title.setText( getActivity().getIntent().getStringExtra("title") );
+        xiangqin.setText( getActivity().getIntent().getStringExtra("desc") );
+        return header;
     }
 
 }

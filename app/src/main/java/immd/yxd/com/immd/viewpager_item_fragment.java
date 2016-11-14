@@ -86,7 +86,6 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
             } else {
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
-                if (viewHolder.imageView != null)   viewHolder.imageView.setVisibility(View.INVISIBLE);
             }
 
             String juan_st = "劵:¥ "+dataList.get(position).getQuan_price();
@@ -127,8 +126,8 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
                 try {
                     String url;
                     if (Num==514200)    url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++);         //第一项全部数据。貌似不需要加这个参数
-                    else if (Num==1000) url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&ftype="+ftype+"&stype="+stype+"&page="+(page++);
-                    else                url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++)+"&ftype="+(Num);
+                    else if (Num==1000) url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&ftype="+ftype+"&stype="+stype+"&page="+(page++);       //好像是分类列表那里用的
+                    else                url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++)+"&ftype="+(Num);                       //应该是福利园首页
                     String response = httpConn.getData(url);
 
                     JSONArray jsonArray=new JSONObject(response).getJSONArray("msg");
@@ -157,6 +156,7 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
                 } catch (Exception e){
                     e.printStackTrace();
                     Log.i("baicaijia", "getStr抛出异常");
+                    page--;
                 }
             }
         }).start();

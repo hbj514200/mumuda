@@ -1,6 +1,7 @@
 package immd.yxd.com.immd;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,13 +28,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-
 import immd.yxd.com.immd.goods.baicai_data;
 import immd.yxd.com.immd.tools.CallBack;
 import immd.yxd.com.immd.tools.httpConn;
+import immd.yxd.com.immd.tools.myIntent;
 import immd.yxd.com.immd.tools.shuaxin;
 
-public class SearchActivity extends AppCompatActivity implements View.OnClickListener, CallBack {
+public class SearchActivity extends AppCompatActivity implements View.OnClickListener, CallBack, AdapterView.OnItemClickListener {
     private EditText editText;
     private httpConn connect;
     private ListView listView;
@@ -54,6 +56,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
         listView = (ListView) findViewById(R.id.baicaijia_listview);
         connect = httpConn.newInstance(this);
+        listView.setOnItemClickListener(this);
 
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         shuaxin.xiala(swipeRefreshLayout, this);
@@ -100,6 +103,12 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = myIntent.getIntent( dataList.get(position), new Intent(SearchActivity.this, contentActivity.class) );
+        startActivity(intent);
+    }
+
     public class myadapter extends ArrayAdapter<baicai_data> {
 
         public myadapter(Context context, int resouId, List<baicai_data> object) {
@@ -115,6 +124,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = (ImageView) view.findViewById(R.id.item_imageview);
                 viewHolder.yuanjia = (TextView) view.findViewById(R.id.item_yuanjia);
+                viewHolder.yuanjia.getPaint().setAntiAlias(true);//抗锯齿
                 viewHolder.yuanjia.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG); //中划线
                 viewHolder.juan = (TextView) view.findViewById(R.id.item_juan);
                 viewHolder.xiangqin = (TextView) view.findViewById(R.id.item_xiangqin);
@@ -124,12 +134,11 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             } else {
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
-                if (viewHolder.imageView != null)   viewHolder.imageView.setVisibility(View.INVISIBLE);
             }
 
             String juan_st = " 劵:¥ "+dataList.get(position).getQuan_price();
 
-            connect.getImageView( viewHolder.imageView, dataList.get(position).getPic(), 250 );
+            connect.displayImg( viewHolder.imageView, dataList.get(position).getPic(), 250 );
             viewHolder.yuanjia.setText( dataList.get(position).getOrg_Price() );
             viewHolder.juan.setText( juan_st );
             viewHolder.qian.setText( dataList.get(position).getPrice() );

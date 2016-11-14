@@ -17,8 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -74,6 +72,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = (ImageView) view.findViewById(R.id.item_imageview);
                 viewHolder.yuanjia = (TextView) view.findViewById(R.id.item_yuanjia);
+                viewHolder.yuanjia.getPaint().setAntiAlias(true);//抗锯齿
                 viewHolder.yuanjia.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG); //中划线
                 viewHolder.juan = (TextView) view.findViewById(R.id.item_juan);
                 viewHolder.xiangqin = (TextView) view.findViewById(R.id.item_xiangqin);
@@ -83,12 +82,11 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             } else {
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
-                if (viewHolder.imageView != null)   viewHolder.imageView.setVisibility(View.INVISIBLE);
             }
 
             String juan_st = " 劵:¥ "+dataList.get(position).getQuan_price();
 
-            connect.getImageView( viewHolder.imageView, dataList.get(position).getPic(), 250);
+            connect.getImageView(viewHolder.imageView, dataList.get(position).getPic(), 300);
             viewHolder.yuanjia.setText( dataList.get(position).getOrg_Price() );
             viewHolder.juan.setText( juan_st );
             viewHolder.qian.setText( dataList.get(position).getPrice() );
@@ -119,10 +117,10 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             @Override
             public void run() {
                 try {
-                    String url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++);
+                    String url = "http://www.imumuda.cn/index.php?m=api&c=index&a=lowCost&count=30&page="+(page++);
                     String response = httpConn.getData(url);
 
-                    JSONArray jsonArray=new JSONObject(response.toString()).getJSONArray("msg");
+                    JSONArray jsonArray=new JSONObject(response).getJSONArray("msg");
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject jsonObject=(JSONObject)jsonArray.get(i);
                         baicai_data data = new baicai_data();
@@ -147,6 +145,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
                 } catch (Exception e){
                     e.printStackTrace();
                     Log.i("baicaijia", "getStr抛出异常");
+                    page--;
                 }
             }
         }).start();

@@ -28,7 +28,7 @@ public class fuliyuanFragment extends Fragment {
         mTabLayout = (TabLayout) view.findViewById(R.id.tabs);
 
         //添加页卡视图
-        for (int i=1;   i<=9;   i++){
+        for (int i=1;   i<=10;   i++){
             viewpager_item_fragment fragment = new viewpager_item_fragment();
             if (i == 1)     fragment.Num = 514200;
             else            fragment.Num = i-1;   //传递类型编号
@@ -45,6 +45,7 @@ public class fuliyuanFragment extends Fragment {
         mTitleList.add("数码");
         mTitleList.add("美妆");
         mTitleList.add("文体");
+        mTitleList.add("预告");
 
         mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);//设置tab模式，当前为左右滚动
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(0)));//添加tab选项卡
@@ -56,6 +57,7 @@ public class fuliyuanFragment extends Fragment {
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(6)));
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(7)));
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(8)));
+        mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(9)));
 
         adapter = new FragAdapter(getActivity().getSupportFragmentManager(), mFragmentList);
         mViewPager.setAdapter(adapter);

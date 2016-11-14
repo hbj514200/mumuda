@@ -65,7 +65,7 @@ public class MyListViewAdapter2 extends BaseAdapter{
         selectIndex=index;
     }
 
-    class ViewHolder{
+    private class ViewHolder{
         ImageView im;
         TextView tv;
     }

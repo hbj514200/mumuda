@@ -3,6 +3,9 @@ package immd.yxd.com.immd;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+
+import java.io.File;
 
 public class welcome_Activity extends Activity {
 
@@ -10,6 +13,10 @@ public class welcome_Activity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         tiaozhuan();
+
+        File file = new File(Environment.getExternalStorageDirectory().getPath()+"/Immd/");
+        if (!file.exists())      file.mkdirs();
+        //chuan jian mu lu
     }
 
     private void tiaozhuan(){

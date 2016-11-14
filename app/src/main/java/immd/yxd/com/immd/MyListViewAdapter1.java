@@ -8,9 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- * Created by a on 2016/5/12.
- */
 public class MyListViewAdapter1 extends BaseAdapter{
 
     private final String[] mMenus;

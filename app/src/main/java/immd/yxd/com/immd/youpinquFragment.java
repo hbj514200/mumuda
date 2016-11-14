@@ -72,8 +72,6 @@ public class youpinquFragment extends Fragment implements AdapterView.OnItemClic
                 view = LayoutInflater.from(getActivity()).inflate(R.layout.article_item, null);
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = (ImageView) view.findViewById(R.id.item_imageview);
-                if (viewHolder.imageView != null)   viewHolder.imageView.setVisibility(View.INVISIBLE);
-                connect.getImageView( viewHolder.imageView, dataList.get(position).getPic(), 0);
                 viewHolder.title = (TextView) view.findViewById(R.id.item_title);
                 viewHolder.xiangqin = (TextView) view.findViewById(R.id.item_xiangqin);
                 view.setTag(viewHolder);
@@ -81,6 +79,7 @@ public class youpinquFragment extends Fragment implements AdapterView.OnItemClic
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
             }
+            connect.displayImg( viewHolder.imageView, dataList.get(position).getPic(), 0);
             viewHolder.title.setText( dataList.get(position).getTitle() );
             viewHolder.xiangqin.setText( dataList.get(position).getDesc() );
 
@@ -117,10 +116,7 @@ public class youpinquFragment extends Fragment implements AdapterView.OnItemClic
                         data.setPic( jsonObject.getString("pic") );
                         data.setTitle( jsonObject.getString("title") );
                         data.setDesc( jsonObject.getString("desc") );
-                        if (i==0)
-                        /**
-                         * 切记要删，限制了只获取1个， 因为 第二个文章pic网址为1  ，不合法会崩溃
-                         */
+                        if ( !jsonObject.getString("pic").equals("1") )
                             dataList.add(data);
                     }
                     if (page==2){
@@ -131,6 +127,7 @@ public class youpinquFragment extends Fragment implements AdapterView.OnItemClic
                 } catch (Exception e){
                     e.printStackTrace();
                     Log.i("baicaijia", "getStr抛出异常");
+                    page--;
                 }
             }
         }).start();

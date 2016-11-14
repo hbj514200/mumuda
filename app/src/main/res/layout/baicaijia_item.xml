@@ -14,7 +14,7 @@
         android:id="@+id/item_qian"
         android:layout_toRightOf="@id/item_imageview"
         android:padding="5dp"
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:textColor="#d15d22"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -25,7 +25,7 @@
         android:layout_alignLeft="@id/item_qian"
         android:layout_below="@id/item_qian"
         android:textColor="#fb5375"
-        android:textSize="11sp"
+        android:textSize="13sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -39,7 +39,7 @@
         android:maxLines="2"
         android:textColor="@color/tool_text_hui"
         android:layout_centerVertical="true"
-        android:textSize="11sp"
+        android:textSize="16sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -51,7 +51,7 @@
         android:layout_alignParentRight="true"
         android:textColor="#fff9fa"
         android:background="#fb456a"
-        android:textSize="9sp"
+        android:textSize="11sp"
         android:layout_marginTop="-2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -62,7 +62,7 @@
         android:padding="3dp"
         android:layout_alignTop="@id/item_qian"
         android:layout_alignParentRight="true"
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

@@ -116,7 +116,7 @@
                 android:layout_below="@id/content_grid_text"
                 android:name="immd.yxd.com.immd.content_grid_Fragment"
                 android:layout_width="match_parent"
-                android:layout_height="1150dp" />
+                android:layout_height="1200dp" />
 
         </RelativeLayout>
     </ScrollView>

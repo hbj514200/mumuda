@@ -22,7 +22,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-
 import immd.yxd.com.immd.goods.baicai_data;
 import immd.yxd.com.immd.tools.httpConn;
 import immd.yxd.com.immd.tools.myIntent;
@@ -46,6 +45,7 @@ public class content_grid_Fragment extends Fragment implements AdapterView.OnIte
         connect = httpConn.newInstance(getActivity());
         gridView  = (GridView) view.findViewById(R.id.viewpager_item_gridview);
         gridView.setOnItemClickListener(this);
+        gridView.setFocusable(false);
         view.setBackgroundColor(Color.parseColor("#FFFFFF"));       //没办法，背景就是255白
 
         getStrs();
@@ -67,6 +67,7 @@ public class content_grid_Fragment extends Fragment implements AdapterView.OnIte
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = (ImageView) view.findViewById(R.id.item_imageview);
                 viewHolder.yuanjia = (TextView) view.findViewById(R.id.item_yuanjia);
+                viewHolder.yuanjia.getPaint().setAntiAlias(true);//抗锯齿
                 viewHolder.yuanjia.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG); //中划线
                 viewHolder.juan = (TextView) view.findViewById(R.id.item_juan);
                 viewHolder.xiangqin = (TextView) view.findViewById(R.id.item_xiangqin);
@@ -76,12 +77,11 @@ public class content_grid_Fragment extends Fragment implements AdapterView.OnIte
             } else {
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
-                if (viewHolder.imageView != null)   viewHolder.imageView.setVisibility(View.INVISIBLE);
             }
 
             String juan_st = "劵:¥ "+dataList.get(position).getQuan_price();
 
-            connect.getImageView( viewHolder.imageView, dataList.get(position).getPic(), 300 );
+            connect.displayImg(viewHolder.imageView, dataList.get(position).getPic(), 300);
             viewHolder.yuanjia.setText( dataList.get(position).getOrg_Price() );
             viewHolder.juan.setText( juan_st );
             viewHolder.qian.setText( dataList.get(position).getPrice() );
