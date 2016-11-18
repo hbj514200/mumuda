@@ -18,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -81,7 +83,7 @@ public class content_grid_Fragment extends Fragment implements AdapterView.OnIte
 
             String juan_st = "劵:¥ "+dataList.get(position).getQuan_price();
 
-            connect.displayImg(viewHolder.imageView, dataList.get(position).getPic(), 300);
+            connect.getImageView(viewHolder.imageView, dataList.get(position).getPic(), 300);
             viewHolder.yuanjia.setText( dataList.get(position).getOrg_Price() );
             viewHolder.juan.setText( juan_st );
             viewHolder.qian.setText( dataList.get(position).getPrice() );
@@ -105,7 +107,7 @@ public class content_grid_Fragment extends Fragment implements AdapterView.OnIte
             @Override
             public void run() {
                 try {
-                    String url = "http://www.imumuda.cn/index.php?m=api&c=index&a=guess";
+                    String url = "http://119.29.32.91/index.php?m=api&c=index&a=guess";
                     String response = httpConn.getData(url);
 
                     JSONArray jsonArray=new JSONObject(response).getJSONArray("msg");

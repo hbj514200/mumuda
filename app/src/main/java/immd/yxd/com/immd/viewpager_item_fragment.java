@@ -124,9 +124,11 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
             @Override
             public void run() {
                 try {
+                    Log.i("测试", "Num: "+Num );
                     String url;
                     if (Num==514200)    url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++);         //第一项全部数据。貌似不需要加这个参数
                     else if (Num==1000) url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&ftype="+ftype+"&stype="+stype+"&page="+(page++);       //好像是分类列表那里用的
+                    else if (Num==9)    url = "http://119.29.32.91/index.php?m=api&c=index&a=advance&page="+(page++);               //预告，单独接口
                     else                url = "http://119.29.32.91/index.php?m=api&c=index&a=goods&count=30&page="+(page++)+"&ftype="+(Num);                       //应该是福利园首页
                     String response = httpConn.getData(url);
 

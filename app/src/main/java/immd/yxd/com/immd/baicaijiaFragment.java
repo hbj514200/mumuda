@@ -117,7 +117,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             @Override
             public void run() {
                 try {
-                    String url = "http://www.imumuda.cn/index.php?m=api&c=index&a=lowCost&count=30&page="+(page++);
+                    String url = "http://119.29.32.91/index.php?m=api&c=index&a=lowCost&count=30&page="+(page++);
                     String response = httpConn.getData(url);
 
                     JSONArray jsonArray=new JSONObject(response).getJSONArray("msg");
