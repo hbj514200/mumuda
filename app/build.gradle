@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "immd.yxd.com.immd"
+        applicationId "com.qq.qzone.a1336892373.zhekou"
         minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
@@ -25,4 +25,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile files('libs/volley.jar')
     compile 'com.android.support:design:24.2.0'
+    compile 'com.google.firebase:firebase-database:9.4.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
