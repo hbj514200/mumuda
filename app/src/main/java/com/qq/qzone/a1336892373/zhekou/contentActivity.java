@@ -7,9 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.qq.qzone.a1336892373.zhekou.Mine.MineCallback;
+import com.qq.qzone.a1336892373.zhekou.Mine.MyUrl;
 import com.qq.qzone.a1336892373.zhekou.tools.httpConn;
 
-public class contentActivity extends AppCompatActivity implements View.OnClickListener {
+public class contentActivity extends AppCompatActivity implements View.OnClickListener, MineCallback {
 
     private httpConn connect;
     private String quan_link = "";
@@ -21,8 +23,8 @@ public class contentActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
         connect = httpConn.newInstance(this);
-
         view_init();
+        new MyUrl().getUrl(ali_click, this);
     }
 
     private void view_init() {
@@ -76,4 +78,10 @@ public class contentActivity extends AppCompatActivity implements View.OnClickLi
                 break;
         }
     }
+
+    @Override
+    public void setMineUrl(String mineUrl) {
+        this.ali_click = mineUrl;
+    }
+
 }

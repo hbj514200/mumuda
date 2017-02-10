@@ -33,7 +33,6 @@ public class webActivity extends AppCompatActivity {
             if (check_taobao())     {     taobao();      finish();    }
             else                          loadUrl();
         }
-
     }
 
     private void loadUrl(){

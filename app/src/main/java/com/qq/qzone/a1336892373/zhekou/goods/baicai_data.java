@@ -1,5 +1,7 @@
 package com.qq.qzone.a1336892373.zhekou.goods;
 
+import com.qq.qzone.a1336892373.zhekou.Mine.*;
+
 public class baicai_data {
 
     String GoodsID = "";
@@ -110,4 +112,5 @@ public class baicai_data {
     public void setDesc(String desc) {
         Desc = desc;
     }
+
 }

@@ -41,7 +41,7 @@
     <fragment
         android:layout_above="@id/dibu_tab"
         android:id="@+id/content_grid_fragment"
-        android:name="immd.yxd.com.immd.article_listview_Fragment"
+        android:name="com.qq.qzone.a1336892373.zhekou.article_listview_Fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

@@ -1,8 +1,5 @@
 package com.qq.qzone.a1336892373.zhekou.goods;
 
-/**
- * Created by Administrator on 2016/10/31/031.
- */
 public class fenlei_data {
 
     String icon_url = "";
