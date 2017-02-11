@@ -7,4 +7,4 @@
     android:textSize="15sp"
     android:background="@color/di_hui"
     android:gravity="center"
-    android:text="正在加载更多………"/>
+    android:text="加载更多………"/>

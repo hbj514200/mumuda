@@ -2,8 +2,6 @@ package com.qq.qzone.a1336892373.zhekou.tools;
 
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
-import android.util.Log;
-
 import com.android.volley.toolbox.ImageLoader;
 
 public class BitmapCache implements ImageLoader.ImageCache {

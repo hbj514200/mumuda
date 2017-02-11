@@ -134,6 +134,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             } else {
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
+                viewHolder.imageView.setImageBitmap(null);
             }
 
             String juan_st = " 劵:¥ "+dataList.get(position).getQuan_price();

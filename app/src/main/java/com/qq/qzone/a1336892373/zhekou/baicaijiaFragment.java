@@ -17,8 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -84,6 +82,7 @@ public class baicaijiaFragment extends Fragment implements AdapterView.OnItemCli
             } else {
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
+                viewHolder.imageView.setImageResource(R.drawable.im_loading);
             }
 
             String juan_st = " 劵:¥ "+dataList.get(position).getQuan_price();

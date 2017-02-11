@@ -86,10 +86,12 @@ public class viewpager_item_fragment extends Fragment implements AdapterView.OnI
             } else {
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
+                viewHolder.imageView.setImageResource(R.drawable.im_loading);
             }
 
             String juan_st = "劵:¥ "+dataList.get(position).getQuan_price();
 
+            viewHolder.imageView.setTag(dataList.get(position).getPic());
             connect.getImageView( viewHolder.imageView, dataList.get(position).getPic(), 300 );
             viewHolder.yuanjia.setText( dataList.get(position).getOrg_Price() );
             viewHolder.juan.setText( juan_st );

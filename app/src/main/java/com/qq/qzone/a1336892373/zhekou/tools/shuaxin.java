@@ -5,13 +5,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
-
-import com.qq.qzone.a1336892373.zhekou.R;
-
-import static android.R.id.list;
 
 public class shuaxin {
 

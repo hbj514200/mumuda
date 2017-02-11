@@ -101,6 +101,10 @@ public class httpConn {
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
+                        if (!imageView.getTag().equals(url)){
+                            saveBitmapFile(response, file);
+                            return; //防止图片闪动错位
+                        }
                         imageView.setImageBitmap(response);
                         imageView.setVisibility(View.VISIBLE);
                         saveBitmapFile(response, file);
